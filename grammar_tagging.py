@@ -1,0 +1,2 @@
+class GrammarTagger:
+    pass
