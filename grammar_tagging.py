@@ -4,6 +4,7 @@ import pandas as pd
 import spacy
 
 from collections import namedtuple
+from spacy import displacy
 
 SentenceData = namedtuple('SentenceData', 'sentence_id language sentence ' 
                                           'token_freq')
@@ -54,13 +55,13 @@ class GrammarTagger:
                                           token_freq=token_freq))
 
     def _tfidf(self, term_frequency, document_frequency):
-        doc_num = self.data.shape[0]
+        doc_num = self.df.shape[0]
         inverse_document_frequency = \
             math.log((1.0 + doc_num) / (1.0 + document_frequency)) + 1
         return term_frequency * inverse_document_frequency
 
     def tfidf_transform(self):
-        tfidf_feat = np.zeros(shape=(df.shape[0], self.token_num))
+        tfidf_feat = np.zeros(shape=(self.df.shape[0], self.token_num))
         for row_idx, row in enumerate(self.data):
             for token, term_freq in row.token_freq.items():
                 col_idx = self.token_id[token]
@@ -69,7 +70,13 @@ class GrammarTagger:
         return tfidf_feat
 
 
+
+
 if __name__ == "__main__":
-    df = pd.read_csv('data/raw_data.csv')
-    df_subset = df[df['language'] == 'eng'].copy()
-    grammar = GrammarTagger(df_subset)
+    # df = pd.read_csv('data/raw_data.csv')
+    # df_subset = df[df['language'] == 'eng'].copy()
+    # grammar = GrammarTagger(df_subset)
+
+    nlp = spacy.load("en_core_web_sm")
+    doc = nlp("The councimans daughter applied for a job with the city.")
+    displacy.serve(doc, style="dep")
